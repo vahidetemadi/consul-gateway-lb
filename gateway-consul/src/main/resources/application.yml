@@ -1,0 +1,81 @@
+server:
+  port: 8081
+spring:
+  cloud:
+    gateway:
+      metrics:
+        enabled: true
+      routes:
+#        - id: posts-route
+#          uri: http://localhost:3000
+#          predicates:
+#            - Path=/api/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: myCircuitBreaker
+#                fallbackUri: forward:/fallback
+
+        - id: consul-demo-service-route
+          uri: lb://consul-demo
+          predicates:
+            - Path=/api/v1/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        register: true
+        prefer-ip-address: true
+        instance-id: gateway-service-${server.port}
+        service-name: gateway-service
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    gateway:
+      enabled: true
+    resilience4j:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 50
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5000
+        slowCallDurationThreshold: 10000 # 10 seconds
+        slowCallRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 5
+    instances:
+      myCircuitBreaker:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 2s
+    instances:
+      myCircuitBreaker:
+        baseConfig: default
+
+logging:
+  level:
+    io.github.resilience4j.circuitbreaker: DEBUG
+    org.springframework.cloud.gateway: DEBUG

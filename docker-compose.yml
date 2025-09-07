@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+    consul:
+        image: hashicorp/consul:latest
+        container_name: dev-consul-test
+        ports:
+            - "8500:8500"
+        networks:
+            - app-network
+    consul-demo-1:
+        build: ./consul-demo
+        container_name: consul-demo-1
+        environment:
+            - SERVER_PORT=4001
+            - SPRING_CLOUD_CONSUL_HOST=consul
+            - SPRING_CLOUD_CONSUL_PORT=8500
+            - SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID=consul-demo-1
+        depends_on:
+            - consul
+        networks:
+            - app-network
+    consul-demo-2:
+        build: ./consul-demo
+        container_name: consul-demo-2
+        environment:
+            - SERVER_PORT=4002
+            - SPRING_CLOUD_CONSUL_HOST=consul
+            - SPRING_CLOUD_CONSUL_PORT=8500
+            - SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID=consul-demo-2
+        depends_on:
+            - consul
+        networks:
+            - app-network
+    gateway-consul:
+        build: ./gateway-consul
+        container_name: consul-gateway
+        environment:
+            - SPRING_CLOUD_CONSUL_HOST=consul
+            - SPRING_CLOUD_CONSUL_PORT=8500
+        ports:
+            - "8001:8081"
+        depends_on:
+            - consul
+        networks:
+            - app-network
+    
+networks:
+    app-network:
+        driver: bridge

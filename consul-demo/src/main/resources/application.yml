@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: consul-demo
+  cloud:
+    consul:
+      discovery:
+        service-name: consul-demo
+        prefer-ip-address: true
+        health-check-path: /actuator/health
+        register: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+logging:
+  level:
+    org.springframework.cloud.consul: DEBUG
