@@ -35,11 +35,11 @@ To check your instances running successfully head to ```http://localhost:8500/ui
 ![Consul Nodes Status](readme-images/consul-nodes.png#gh-light-mode-only)
 
 ## Test time
-Once have the instances up running, make a call to ```localhost:8001/api/v1/test```:
+Once having the instances up running, make a call to ```localhost:8001/api/v1/test```:
 ```
 curl -X GET http://yourserver.com/api/v1/test
 ```
-We have developed an automated test makes call 10 times to check lb works fine:
+An automated test was developed to make call 10 times to check lb works fine:
 ```Java
 @Autowired
 private WebTestClient webTestClient;
@@ -68,7 +68,7 @@ You should be able to see this test passes valid.
 Contributions are welcome. Just drop an issue to start discussing, or submit a pull request.
 
 ## What's next?
-We plan to add new K8s configuration to enable more maintainable multi-instance subsequent services.
+Planing to add new K8s configuration to enable more maintainable multi-instance subsequent services.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
